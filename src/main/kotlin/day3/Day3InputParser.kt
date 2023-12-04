@@ -1,7 +1,11 @@
 package day3
 
+import day3.models.EnginePartNumber
+import day3.models.EngineScheme
+import day3.models.EngineSymbol
 
-fun parseDay3Input(lines: List<String>): EngineScheme{
+
+fun parseDay3Input(lines: List<String>): EngineScheme {
 
     val parts = mutableListOf<EnginePartNumber>()
     val symbols = mutableListOf<EngineSymbol>()

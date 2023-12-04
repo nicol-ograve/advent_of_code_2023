@@ -1,9 +1,10 @@
 package day3
 
+import day3.models.EnginePartNumber
+import day3.models.EngineScheme
+import day3.models.EngineSymbol
 import utils.getDataLines
-import utils.getDataScanner
 import java.awt.Point
-import java.util.Scanner
 
 fun main(args: Array<String>) {
     val isDemo = false

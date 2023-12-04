@@ -1,7 +1,7 @@
-package day3
+package day3.models
 
 data class EnginePartNumber(
-    val x: Int, val startY: Int, val endY: Int, val number: Int
+val x: Int, val startY: Int, val endY: Int, val number: Int
 )
 
 data class EngineSymbol(
@@ -28,15 +28,8 @@ data class EngineScheme (
         symbolPositions = positions
     }
 
-    fun hasSymbol(x: Int, y: Int, symbol: Char? = null): Boolean {
-        if(symbol == null) {
-            return symbolPositions[x]?.get(y) != null
-        } else {
-            return symbolPositions[x]?.get(y)?.symbol == symbol
-        }
-    }
     fun getSymbol(x: Int, y: Int): EngineSymbol? {
         return symbolPositions[x]?.get(y)
     }
-
 }
+

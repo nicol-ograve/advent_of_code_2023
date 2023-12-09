@@ -10,7 +10,7 @@ import java.nio.file.Paths
 
 
 fun main(args: Array<String>) {
-    createPackagesForDay(5)
+    createPackagesForDay(6)
 }
 
 fun createPackagesForDay(day: Int) {

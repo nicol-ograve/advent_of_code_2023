@@ -1,35 +1,70 @@
 package day14
 
 import shared.Matrix
-import shared.print
+import shared.Pattern
+import shared.Point
 import utils.getDataLines
 import utils.getDataScanner
 import java.util.Scanner
+
+
+val positionsMap = HashMap<Int, ArrayList<Point>>()
 
 fun main(args: Array<String>) {
     val isDemo = false
     val lines = getDataLines(14, if (isDemo) arrayOf("demo") else emptyArray())
 
-    val matrix: Matrix<Char> = Array(lines.size) { r ->
+    var rockId = 1
+    val matrix: Matrix<Int> = Array(lines.size) { r ->
         Array(lines[r].length) { c ->
-            lines[r][c]
+            when (lines[r][c]) {
+                'O' -> {
+                    positionsMap[rockId] = ArrayList()
+                    rockId++
+                }
+
+                '#' -> -1
+                '.' -> 0
+                else -> throw Exception("Unknown")
+            }
         }
     }
 
-    for (i in 0 until 1000000000) {
+    val repetitions = 1000000000
+    val demoRepetitions = 10000
+    for (i in 0 until demoRepetitions) {
 
         loop(matrix, false)
-        matrix.print()
-            println()
 
     }
+
+
+    val bestPatterns = mutableListOf<Pattern>()
+
+    for (value in positionsMap.values) {
+        val rockPatterns = findPatterns(value)
+
+        if (rockPatterns.isNotEmpty()) {
+            val best = rockPatterns.maxBy { it.length }
+            if(best.first + best.length != best.second){
+                println("WHAT")
+            }
+            bestPatterns.add(best)
+        } else {
+            println("No pattern")
+        }
+
+    }
+
+    println(bestPatterns)
+    println()
 
     println(countLoad(matrix))
 
 }
 
 
-fun countLoad(matrix: Matrix<Char>): Int {
+fun countLoad(matrix: Matrix<Int>): Int {
     var load = 0
 
     val rows = matrix.size
@@ -37,7 +72,7 @@ fun countLoad(matrix: Matrix<Char>): Int {
 
     for (c in 0 until columns) {
         for (r in 0 until rows) {
-            if (matrix[r][c] == 'O') {
+            if (matrix[r][c] > 0) {
                 load += rows - r
             }
         }
@@ -47,7 +82,7 @@ fun countLoad(matrix: Matrix<Char>): Int {
 }
 
 
-fun loop(matrix: Matrix<Char>, print: Boolean = true) {
+fun loop(matrix: Matrix<Int>, print: Boolean = true) {
 
     val rows = matrix.size
     val columns = matrix[0].size
@@ -60,13 +95,14 @@ fun loop(matrix: Matrix<Char>, print: Boolean = true) {
 
     for (c in 0 until columns) {
         for (r in 0 until rows) {
-            if (matrix[r][c] == 'O') {
-                matrix[r][c] = '.'
+            if (matrix[r][c] > 0) {
+                val id = matrix[r][c]
+                matrix[r][c] = 0
                 var i = r - 1
-                while (i >= 0 && matrix[i][c] == '.') {
+                while (i >= 0 && matrix[i][c] == 0) {
                     i--
                 }
-                matrix[i + 1][c] = 'O'
+                matrix[i + 1][c] = id
             }
         }
     }
@@ -78,13 +114,14 @@ fun loop(matrix: Matrix<Char>, print: Boolean = true) {
 
     for (r in 0 until rows) {
         for (c in 0 until columns) {
-            if (matrix[r][c] == 'O') {
-                matrix[r][c] = '.'
+            if (matrix[r][c] > 0) {
+                val id = matrix[r][c]
+                matrix[r][c] = 0
                 var i = c - 1
-                while (i >= 0 && matrix[r][i] == '.') {
+                while (i >= 0 && matrix[r][i] == 0) {
                     i--
                 }
-                matrix[r][i + 1] = 'O'
+                matrix[r][i + 1] = id
             }
         }
     }
@@ -97,13 +134,14 @@ fun loop(matrix: Matrix<Char>, print: Boolean = true) {
 
     for (c in 0 until columns) {
         for (r in rows - 1 downTo 0) {
-            if (matrix[r][c] == 'O') {
-                matrix[r][c] = '.'
+            if (matrix[r][c] > 0) {
+                val id = matrix[r][c]
+                matrix[r][c] = 0
                 var i = r + 1
-                while (i < rows && matrix[i][c] == '.') {
+                while (i < rows && matrix[i][c] == 0) {
                     i++
                 }
-                matrix[i - 1][c] = 'O'
+                matrix[i - 1][c] = id
             }
         }
     }
@@ -117,13 +155,15 @@ fun loop(matrix: Matrix<Char>, print: Boolean = true) {
 
     for (r in 0 until rows) {
         for (c in columns - 1 downTo 0) {
-            if (matrix[r][c] == 'O') {
-                matrix[r][c] = '.'
+            if (matrix[r][c] > 0) {
+                val id = matrix[r][c]
+                matrix[r][c] = 0
                 var i = c + 1
-                while (i < columns && matrix[r][i] == '.') {
+                while (i < columns && matrix[r][i] == 0) {
                     i++
                 }
-                matrix[r][i - 1] = 'O'
+                matrix[r][i - 1] = id
+                positionsMap[id]!!.add(Point(r, i - 1))
             }
         }
     }
@@ -136,3 +176,12 @@ fun loop(matrix: Matrix<Char>, print: Boolean = true) {
 
 }
 
+fun Array<Array<Int>>.print() {
+    for (row in indices) {
+        for (column in this[row].indices) {
+            val value = this[row][column]
+            print(if (value > 0) 'O' else if (value == 0) '.' else '#')
+        }
+        println()
+    }
+}
